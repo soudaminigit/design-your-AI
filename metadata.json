@@ -1,0 +1,5 @@
+{
+  "name": "Copy of LMS Video Platform",
+  "description": "A simple Learning Management System to upload and view embedded video lessons. Features an admin panel for content management and a student view for learning.",
+  "requestFramePermissions": []
+}
