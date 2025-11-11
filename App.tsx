@@ -14,8 +14,9 @@ function App() {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
 
     const handleLinkedInLogin = () => {
-        window.location.href = "http://localhost:3000/auth/linkedin";
+        window.location.href = "/api/auth/linkedin";
     };
+
 
     // ✅ Load user session when app starts
     useEffect(() => {
