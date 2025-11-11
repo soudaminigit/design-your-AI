@@ -1,34 +1,4 @@
-﻿/*import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import StudentPage from "./components/StudentPage";  // your page
-import AuthSuccess from "./components/AuthSuccess";  // optional
-
-
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
-}
-
-const root = ReactDOM.createRoot(rootElement);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<App />} />
-                <Route path="/auth-success" element={<AuthSuccess />} />
-                <Route path="/student" element={<StudentPage />} />
-            </Routes>
-        </BrowserRouter>
-    </React.StrictMode>
-); */
-import React from "react";
+﻿import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import App from "./App";
@@ -93,7 +63,15 @@ const Root: React.FC = () => {
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
-        <Root />
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<App />} />
+                <Route path="/student" element={<StudentPage courses={[]}
+                    completedVideoIds={new Set()}
+                    toggleVideoCompletion={() => { }} />} />
+                <Route path="/auth-success" element={<AuthSuccess />} />
+            </Routes>
+        </BrowserRouter>
     </React.StrictMode>
 );
 
