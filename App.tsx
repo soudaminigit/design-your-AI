@@ -34,47 +34,6 @@ function App() {
                 </div>
             </header>
             {/* Contact Us Section */}
-            <section className="mt-16 bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-xl max-w-2xl w-full">
-                <h2 className="text-2xl font-bold text-indigo-900 mb-4">Contact Us</h2>
-                <p className="text-slate-700 mb-6">
-                    Have questions or feedback? Drop us a quick message and we'll get back to you soon!
-                </p>
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        alert("Thank you for reaching out! We’ll respond shortly.");
-                    }}
-                    className="space-y-4"
-                >
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <input
-                            type="text"
-                            placeholder="Your Name"
-                            className="w-full sm:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none"
-                            required
-                        />
-                        <input
-                            type="email"
-                            placeholder="Your Email"
-                            className="w-full sm:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none"
-                            required
-                        />
-                    </div>
-                    <textarea
-                        placeholder="Your Message"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none"
-                        rows={4}
-                        required
-                    ></textarea>
-                    <button
-                        type="submit"
-                        className="bg-gradient-to-r from-cyan-400 to-indigo-700 hover:from-cyan-500 hover:to-indigo-800 text-white px-6 py-2 rounded-lg font-semibold shadow-md transition-transform hover:-translate-y-1"
-                    >
-                        Send Message
-                    </button>
-                </form>
-            </section>
-
             {/* Main Content */}
             <main className="flex flex-col flex-1 items-center justify-center px-4 text-center relative z-10">
                 <div className="bg-white/90 p-10 rounded-2xl shadow-2xl max-w-2xl">
