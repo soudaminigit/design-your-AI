@@ -5,3 +5,5 @@ dist\
 *.log
 *.lock
 *.DS_Store
+.vercel/
+backend/
