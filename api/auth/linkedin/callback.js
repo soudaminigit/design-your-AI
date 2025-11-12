@@ -31,10 +31,8 @@ export default async function handler(req, res) {
     const { name, email } = profileResponse.data;
 
     // Redirect user to frontend success page with their name/email
-    const redirectURL = `${process.env.FRONTEND_URL}/auth-success?name=${encodeURIComponent(
-      name
-    )}&email=${encodeURIComponent(email)}`;
-
+    const redirectURL = `${process.env.FRONTEND_URL}/student?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`;
+  
     res.redirect(redirectURL);
   } catch (err) {
     console.error("LinkedIn callback error:", err.message);
