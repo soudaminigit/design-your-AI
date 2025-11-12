@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🎨 Custom global styles */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f8fafc; /* subtle background */
+  color: #1e293b; /* slate-800 text */
+}
+
+/* Optional: Smooth transitions for page interactions */
+* {
+  transition: all 0.3s ease;
+}
