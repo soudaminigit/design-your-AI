@@ -111,7 +111,7 @@ function App() {
                     backgroundPosition: "center",
                 }}
             >
-                {/* Minimal translucent header for brand */}
+                {/* Minimal translucent header for brand }*/
               /*  <header className="absolute top-0 left-0 w-full bg-sky-900/80 py-3 shadow text-white text-lg font-semibold">
                     Design Your AI
                 </header>
