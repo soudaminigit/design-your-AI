@@ -1,282 +1,413 @@
-﻿import React, { useState, useEffect } from "react";
-import type { Video, Course } from "../types";
-import VideoPlayer from "./VideoPlayer";
-import { CheckCircleIconOutline, CheckCircleIconFilled } from "./icons";
-import { useSearchParams } from "react-router-dom";
+// src/components/StudentPage.tsx
+import React, { 
+  useEffect, 
+  useState, 
+  Suspense, 
+  useCallback, 
+  ReactElement 
+} from 'react';
+import { useSearchParams } from 'react-router-dom';
+import ErrorBoundary from './ErrorBoundary';
 
-interface StudentPageProps {
-    courses: Course[];
-    completedVideoIds: Set<string>;
-    toggleVideoCompletion: (id: string) => void;
+// Import the JSON data with type assertion
+import rawCoursesData from "../Scripts/src/data/courses.json";
+
+// Types
+// Types
+export interface Lesson {
+  id: string;
+  title: string;
+  description?: string;
+  url: string;
+  duration?: number;
+  thumbnail?: string;
+  notebook?: boolean;
+  completed?: boolean;
+  order?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-const CoursePlayerView: React.FC<{
-    course: Course;
-    completedVideoIds: Set<string>;
-    toggleVideoCompletion: (id: string) => void;
-    onBack: () => void;
-}> = ({ course, completedVideoIds, toggleVideoCompletion, onBack }) => {
-    const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+export interface Course {
+  id: string;
+  title: string;
+  description?: string;
+  thumbnail?: string;
+  lessons: Lesson[];
+  videos?: Lesson[]; // For backward compatibility
+  name?: string; // Alternative to title for backward compatibility
+  level?: 'beginner' | 'intermediate' | 'advanced';
+  category?: string;
+  published?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface StudentPageProps {
+  initialCourseId?: string;
+  onCourseSelect?: (courseId: string) => void;
+  onLessonSelect?: (lessonId: string) => void;
+  onLessonComplete?: (lessonId: string, completed: boolean) => void;
+  className?: string;
+}
+
+// Type for the raw course data from JSON
+interface RawCourse {
+  id?: string;
+  title?: string;
+  name?: string;
+  description?: string;
+  thumbnail?: string;
+  lessons?: Array<{
+    id?: string;
+    title?: string;
+    description?: string;
+    url?: string;
+    duration?: number;
+    thumbnail?: string;
+    notebook?: boolean;
+    completed?: boolean;
+    order?: number;
+    createdAt?: string;
+    updatedAt?: string;
+  }>;
+  videos?: any[];
+  level?: string;
+  category?: string;
+  published?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// Type assertion for the imported JSON
+const coursesJson = rawCoursesData as unknown as RawCourse[];
+
+// Define props for the fallback player component
+interface FallbackPlayerProps {
+  url: string;
+  [key: string]: any;
+}
+
+// Fallback component for when ReactPlayer fails to load
+const FallbackPlayer: React.FC<FallbackPlayerProps> = ({ url }) => (
+  <div className="bg-gray-100 p-4 rounded-lg text-center">
+    <p className="text-red-500">Failed to load video player.</p>
+    <a 
+      href={url} 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="text-blue-500 underline mt-2 inline-block"
+    >
+      Open video in new tab
+    </a>
+  </div>
+);
+
+// Safe wrapper for ReactPlayer with error boundary
+// Define the type for the ReactPlayer component
+interface ReactPlayerProps {
+  url: string;
+  width?: string;
+  height?: string;
+  style?: React.CSSProperties;
+  controls?: boolean;
+  config?: {
+    file?: {
+      attributes?: {
+        controlsList?: string;
+        disablePictureInPicture?: boolean;
+      };
+    };
+  };
+  onError?: (error: Error) => void;
+  onReady?: () => void;
+}
+
+// Safe wrapper for ReactPlayer with error boundary
+const SafeReactPlayer = React.lazy(async (): Promise<{ default: React.ComponentType<ReactPlayerProps> }> => {
+  try {
+    // @ts-ignore - We know this module exists at runtime
+    const module = await import('react-player/lazy');
+    return { default: module.default };
+  } catch (error: unknown) {
+    console.error('Failed to load ReactPlayer:', error);
+    return { default: FallbackPlayer };
+  }
+});
+
+// Fallback component for loading
+const PlayerFallback = () => (
+  <div className="bg-gray-100 rounded-lg flex items-center justify-center" style={{ height: '480px' }}>
+    <div className="animate-pulse text-gray-500">Loading player...</div>
+  </div>
+);
+
+// Transform the imported JSON to match the Course[] shape
+const rawCourses: Course[] = coursesJson.map((course, index) => ({
+  id: course.id || `course-${index + 1}`,
+  title: course.title || course.name || `Course ${index + 1}`,
+  description: course.description,
+  thumbnail: course.thumbnail,
+  lessons: (course.lessons || course.videos || []).map((lesson: any, lessonIndex: number) => ({
+    id: lesson.id || `lesson-${index}-${lessonIndex}`,
+    title: lesson.title || `Lesson ${lessonIndex + 1}`,
+    description: lesson.description,
+    url: lesson.url || '',
+    duration: lesson.duration,
+    thumbnail: lesson.thumbnail,
+    notebook: lesson.notebook,
+    completed: lesson.completed || false,
+    order: lesson.order || lessonIndex,
+    createdAt: lesson.createdAt,
+    updatedAt: lesson.updatedAt
+  })),
+  level: course.level as 'beginner' | 'intermediate' | 'advanced' | undefined,
+  category: course.category,
+  published: course.published,
+  createdAt: course.createdAt,
+  updatedAt: course.updatedAt
+}));
+
+interface Props {
+    // If your app passes props, you can adapt; else leave empty and use rawCourses
+}
+
+const StudentPage: React.FC<StudentPageProps> = ({
+  initialCourseId,
+  onCourseSelect,
+  onLessonSelect,
+  onLessonComplete,
+  className = ''
+}): ReactElement => {
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+    const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
     const [searchParams] = useSearchParams();
     const name = searchParams.get("name");
-    const email = searchParams.get("email");
 
     useEffect(() => {
-        if (course.videos.length > 0) {
-            setSelectedVideo(course.videos[0]);
-        } else {
-            setSelectedVideo(null);
-        }
-    }, [course]);
+        // Normalize data: some exports may use 'videos' key; convert to 'lessons'
+        const normalized = rawCourses.map((c, i) => {
+            const lessons = (c.lessons && c.lessons.length ? c.lessons : (c.videos || [])) as Lesson[];
+            return {
+                ...c,
+                id: c.id || `course-${i + 1}`,
+                title: c.title || c.name || c.id || `Course ${i + 1}`,
+                lessons,
+            };
+        });
 
-    if (course.videos.length === 0) {
-        return (
-            <div className="text-center py-10">
-                <div className="bg-sky-600 text-white py-3 mb-6 shadow">
-                    Welcome, <span className="font-bold">{name}</span>
-                </div>
-                <p>Your email: {email}</p>
-                <p>This is your student dashboard.</p>
-                <button
-                    onClick={onBack}
-                    className="mb-8 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
-                >
-                    &larr; Back to Courses
-                </button>
-                <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200">
-                    No Lessons in this Course
-                </h2>
-                <p className="mt-2 text-slate-500 dark:text-slate-400">
-                    Content for "{course.title}" is coming soon.
-                </p>
-            </div>
+        setCourses(normalized);
+
+        if (normalized.length > 0) {
+            setSelectedCourse(normalized[0]);
+            const firstLesson = normalized[0].lessons && normalized[0].lessons.length ? normalized[0].lessons[0] : null;
+            setSelectedLesson(firstLesson);
+        }
+    }, []);
+
+    const toggleVideoCompletion = useCallback((id: string) => {
+        if (!selectedCourse || !selectedLesson) return;
+        
+        setCourses(prevCourses => 
+            prevCourses.map(course => {
+                if (course.id === selectedCourse.id) {
+                    const updatedLessons = course.lessons.map(lesson => 
+                        lesson.id === id || lesson.title === selectedLesson.title
+                            ? { ...lesson, completed: !lesson.completed }
+                            : lesson
+                    );
+                    return { ...course, lessons: updatedLessons };
+                }
+                return course;
+            })
         );
+        
+        // Update the selected lesson's completed status
+        const newCompletedStatus = !selectedLesson.completed;
+        setSelectedLesson({ ...selectedLesson, completed: newCompletedStatus });
+        
+        // Notify parent component if callback is provided
+        if (onLessonComplete && selectedLesson.id) {
+            onLessonComplete(selectedLesson.id, newCompletedStatus);
+        }
+    }, [selectedCourse, selectedLesson, onLessonComplete]);
+    
+    // Ensure we have a valid return value
+    if (!selectedCourse) {
+        return <div>Loading courses...</div>;
     }
 
-    const courseVideos = course.videos;
-    const completedInCourseCount = courseVideos.filter((v) =>
-        completedVideoIds.has(v.id)
-    ).length;
-    const progress =
-        courseVideos.length > 0
-            ? (completedInCourseCount / courseVideos.length) * 100
-            : 0;
-
     return (
-        <div>
-            <div className="bg-sky-600 text-white py-3 mb-6 shadow">
-                Welcome, <span className="font-bold">{name}</span>
-            </div>
-
-            <button
-                onClick={onBack}
-                className="mb-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+        <div 
+            className={`relative min-h-screen flex flex-col bg-gradient-to-br from-sky-100 to-purple-100 font-[Inter] overflow-hidden p-6 ${className}`}
+            role="main"
+            aria-label="Course player"
+        >
+            <ErrorBoundary 
+                fallback={
+                    <div className="p-6 max-w-4xl mx-auto">
+                        <h1 className="text-2xl font-bold text-red-600 mb-4">Oops! Something went wrong</h1>
+                        <p className="mb-4">We're having trouble loading the course content. Please try refreshing the page or contact support if the issue persists.</p>
+                        <button 
+                            onClick={() => window.location.reload()}
+                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        >
+                            Refresh Page
+                        </button>
+                    </div>
+                }
             >
-                &larr; Back to Courses
-            </button>
-
-            <div className="flex flex-col lg:flex-row gap-8">
-                <div className="lg:w-3/4">
-                    <div className="bg-black rounded-lg shadow-2xl overflow-hidden aspect-video mb-4">
-                        {selectedVideo && (
-                            <VideoPlayer url={selectedVideo.url} title={selectedVideo.title} />
-                        )}
-                    </div>
-                    {selectedVideo && (
-                        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg">
-                            <h1 className="text-3xl font-bold mb-2 text-slate-900 dark:text-white">
-                                {selectedVideo.title}
-                            </h1>
-                            <p className="text-slate-600 dark:text-slate-300">
-                                {selectedVideo.description}
-                            </p>
-                        </div>
-                    )}
+            <header className="z-10 w-full bg-gradient-to-r from-cyan-400 to-indigo-900 px-6 py-3 shadow-md flex justify-between items-center rounded-lg mb-6">
+                <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 via-indigo-700 to-purple-400 rounded-xl flex items-center justify-center text-2xl">🤖</div>
+                    <h1 className="text-lg font-semibold text-white">Design Your AI</h1>
                 </div>
+                <div className="flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-white text-sm backdrop-blur">
+                    <span role="img" aria-label="user">👤</span>
+                    {name ? `Hi, ${name}` : "Explorer Mode"}
+                </div>
+            </header>
 
-                {/* Sidebar */}
-                <div className="lg:w-1/4">
-                    <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-lg mb-4">
-                        <div className="flex justify-between items-center mb-2">
-                            <h2 className="text-xl font-bold">{course.title}</h2>
-                            <span className="text-sm font-semibold text-sky-600 dark:text-sky-400">
-                                {completedInCourseCount} / {courseVideos.length}
-                            </span>
-                        </div>
-                        <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                            <div
-                                className="bg-sky-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${progress}%` }}
-                            ></div>
-                        </div>
-                        <p className="text-xs text-right text-slate-500 dark:text-slate-400 mt-1">
-                            {Math.round(progress)}% Complete
-                        </p>
-                    </div>
-
-                    {/* Video list */}
-                    <div className="space-y-2 max-h-[65vh] overflow-y-auto pr-2">
-                        {courseVideos.map((video, index) => {
-                            const isCompleted = completedVideoIds.has(video.id);
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Courses column */}
+                <div className="lg:col-span-1 bg-white/90 p-4 rounded-2xl shadow-lg max-h-[70vh] overflow-y-auto">
+                    <h2 className="text-xl font-bold text-indigo-900 mb-4">Courses</h2>
+                    <div className="space-y-3">
+                        {courses.map((c) => {
+                            const totalLessons = c.lessons?.length || 0;
+                            const completedCount = c.lessons?.filter(l => l.completed).length || 0;
+                            const progress = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
                             return (
-                                <div
-                                    key={video.id}
-                                    className={`w-full flex items-center justify-between rounded-md transition-all duration-200 ${selectedVideo?.id === video.id
-                                            ? "bg-sky-100 dark:bg-sky-900/50 ring-2 ring-sky-500"
-                                            : "bg-white dark:bg-slate-800 shadow-sm"
-                                        }`}
-                                >
-                                    <button
-                                        onClick={() => setSelectedVideo(video)}
-                                        className={`flex-grow text-left p-3 rounded-l-md transition-all duration-200 ${isCompleted ? "opacity-70" : "opacity-100"
-                                            } hover:bg-slate-100 dark:hover:bg-slate-700`}
-                                    >
-                                        <div className="flex items-start space-x-3">
-                                            <span
-                                                className={`text-lg font-bold ${selectedVideo?.id === video.id
-                                                        ? "text-sky-600 dark:text-sky-400"
-                                                        : "text-slate-500 dark:text-slate-400"
-                                                    }`}
-                                            >
-                                                {index + 1}
-                                            </span>
-                                            <div>
-                                                <p
-                                                    className={`font-semibold ${selectedVideo?.id === video.id
-                                                            ? "text-slate-800 dark:text-slate-100"
-                                                            : "text-slate-700 dark:text-slate-200"
-                                                        } ${isCompleted ? "line-through" : ""}`}
-                                                >
-                                                    {video.title}
-                                                </p>
-                                                <p className="text-sm text-slate-500 dark:text-slate-400">
-                                                    Video
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </button>
-                                    <button
-                                        onClick={() => toggleVideoCompletion(video.id)}
-                                        aria-label={
-                                            isCompleted
-                                                ? "Mark as incomplete"
-                                                : "Mark as complete"
-                                        }
-                                        className="p-3 pr-4 rounded-r-md transition-colors duration-200 text-slate-400 dark:text-slate-500 hover:text-sky-500 dark:hover:text-sky-400 focus:outline-none"
-                                    >
-                                        {isCompleted ? (
-                                            <CheckCircleIconFilled />
-                                        ) : (
-                                            <CheckCircleIconOutline />
-                                        )}
-                                    </button>
+                                <div key={c.id} className={`p-3 rounded-xl cursor-pointer hover:shadow-md transition ${selectedCourse?.id === c.id ? "ring-2 ring-indigo-300" : "bg-white"}`} onClick={() => { setSelectedCourse(c); setSelectedLesson(c.lessons && c.lessons.length ? c.lessons[0] : null); }}>
+                                    <h3 className="text-lg font-semibold text-indigo-900">{c.title}</h3>
+                                    <p className="text-sm text-slate-500">{c.description}</p>
+                                    <div className="mt-2 w-full bg-slate-200 rounded-full h-2">
+                                        <div className="h-2 bg-indigo-600 rounded-full" style={{ width: `${progress}%` }} />
+                                    </div>
+                                    <p className="text-xs text-slate-500 mt-1">{progress}% complete</p>
                                 </div>
                             );
                         })}
                     </div>
                 </div>
-            </div>
-        </div>
-    );
-};
 
-const StudentPage: React.FC<StudentPageProps> = ({
-    courses,
-    completedVideoIds,
-    toggleVideoCompletion,
-}) => {
-    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-    const [searchParams] = useSearchParams();
-    const queryName = searchParams.get("name");
-    const queryEmail = searchParams.get("email");
+                {/* Player and lessons */}
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-white/90 p-6 rounded-2xl shadow-2xl">
+                        <h2 className="text-2xl font-bold text-indigo-900">{selectedCourse?.title || "Select a course"}</h2>
+                        <p className="text-slate-600">{selectedCourse?.description}</p>
+                    </div>
 
-    const [user, setUser] = React.useState<{ name?: string; email?: string }>({
-        name: queryName || "",
-        email: queryEmail || "",
-    });
-
-    useEffect(() => {
-        if (queryName && queryEmail) {
-            localStorage.setItem(
-                "user",
-                JSON.stringify({ name: queryName, email: queryEmail })
-            );
-        } else {
-            const stored = localStorage.getItem("user");
-            if (stored) setUser(JSON.parse(stored));
-        }
-    }, [queryName, queryEmail]);
-
-    if (selectedCourse) {
-        return (
-            <CoursePlayerView
-                course={selectedCourse}
-                completedVideoIds={completedVideoIds}
-                toggleVideoCompletion={toggleVideoCompletion}
-                onBack={() => setSelectedCourse(null)}
-            />
-        );
-    }
-
-    return (
-        <div>
-            {/* ✅ Add header at top */}
-            <div className="bg-sky-600 text-white py-3 mb-6 shadow">
-                Welcome, <span className="font-bold">{user.name}</span>
-            </div>
-
-            <h1 className="text-4xl font-extrabold text-center mb-2 text-slate-900 dark:text-white">
-                Available Courses
-            </h1>
-            <p className="text-center text-slate-500 dark:text-slate-400 mb-10">
-                Select a course to begin your learning journey.
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {courses.map((course) => {
-                    const courseVideos = course.videos;
-                    const completedInCourseCount = courseVideos.filter((v) =>
-                        completedVideoIds.has(v.id)
-                    ).length;
-                    const progress =
-                        courseVideos.length > 0
-                            ? (completedInCourseCount / courseVideos.length) * 100
-                            : 0;
-
-                    return (
-                        <div
-                            key={course.id}
-                            onClick={() => setSelectedCourse(course)}
-                            className="bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer"
-                        >
-                            <div className="p-6">
-                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-                                    {course.title}
-                                </h2>
-                                <p className="text-slate-500 dark:text-slate-400 mb-4">
-                                    {course.videos.length} lessons
-                                </p>
-                                <div className="flex justify-between items-center mb-1">
-                                    <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
-                                        Progress
-                                    </span>
-                                    <span className="text-sm font-semibold text-sky-600 dark:text-sky-400">
-                                        {completedInCourseCount} / {courseVideos.length}
-                                    </span>
-                                </div>
-                                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                                    <div
-                                        className="bg-sky-500 h-2 rounded-full"
-                                        style={{ width: `${progress}%` }}
-                                    ></div>
-                                </div>
+                    <div className="bg-white/90 p-6 rounded-2xl shadow-2xl">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div className="lg:col-span-2">
+                                {selectedLesson ? (
+                                    <>
+                                        <h3 className="text-xl font-semibold text-indigo-900 mb-3">{selectedLesson.title}</h3>
+                                        <div className="rounded-lg overflow-hidden">
+                                            <ErrorBoundary 
+                                                fallback={
+                                                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                                                        <p className="text-red-700">Unable to load the video player.</p>
+                                                        <a 
+                                                            href={selectedLesson.url} 
+                                                            target="_blank" 
+                                                            rel="noopener noreferrer"
+                                                            className="text-blue-600 hover:underline mt-2 inline-block"
+                                                        >
+                                                            Open video in new tab
+                                                        </a>
+                                                    </div>
+                                                }
+                                            >
+                                                <Suspense fallback={<PlayerFallback />}>
+                                                    <div className="relative aspect-video w-full bg-black rounded-lg overflow-hidden">
+                                                        <SafeReactPlayer 
+                                                            url={selectedLesson.url} 
+                                                            width="100%"
+                                                            height="100%"
+                                                            style={{
+                                                                position: 'absolute',
+                                                                top: 0,
+                                                                left: 0,
+                                                                width: '100%',
+                                                                height: '100%',
+                                                            }}
+                                                            controls
+                                                            config={{
+                                                                file: {
+                                                                    attributes: {
+                                                                        controlsList: 'nodownload',
+                                                                        disablePictureInPicture: true,
+                                                                    }
+                                                                }
+                                                            }}
+                                                            onError={(error: Error) => {
+                                                                console.error('Error loading video:', error);
+                                                            }}
+                                                            onReady={() => {
+                                                                // Set focus to the player when it's ready for better keyboard navigation
+                                                                const player = document.querySelector('.react-player');
+                                                                if (player instanceof HTMLElement) {
+                                                                    player.setAttribute('tabindex', '-1');
+                                                                    player.focus();
+                                                                }
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </Suspense>
+                                            </ErrorBoundary>
+                                        </div>
+                                        <div className="mt-4 flex justify-between items-center">
+                                            <div className="text-sm text-slate-600">{selectedLesson.description}</div>
+                                            <button 
+                                                onClick={() => selectedLesson && selectedLesson.id && toggleVideoCompletion(selectedLesson.id)} 
+                                                className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                                aria-label={selectedLesson.completed ? 'Mark as not completed' : 'Mark as completed'}
+                                            >
+                                                {selectedLesson.completed ? 'Completed ✓' : 'Mark Complete'}
+                                            </button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="text-center text-slate-500 p-8">No lesson selected</div>
+                                )}
                             </div>
+
+                            <aside className="lg:col-span-1 p-2">
+                                <h4 className="text-lg font-semibold mb-3">Lessons</h4>
+                                <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+                                    {(selectedCourse?.lessons || []).map((l) => (
+                                        <div 
+                                            key={l.id || l.title}
+                                            className={`p-3 rounded-md cursor-pointer transition-colors ${
+                                                selectedLesson?.title === l.title 
+                                                    ? "bg-indigo-100 border-l-4 border-indigo-500" 
+                                                    : "bg-white hover:bg-slate-50"
+                                            } ${l.completed ? 'opacity-75' : ''}`} 
+                                            onClick={() => setSelectedLesson(l)}
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <div className="font-medium text-indigo-800">
+                                                    {l.completed && <span className="text-green-500 mr-1">✓</span>}
+                                                    {l.title}
+                                                </div>
+                                                <div className="text-xs text-slate-500">{l.notebook ? "Notebook available" : ""}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </aside>
                         </div>
-                    );
-                })}
+                    </div>
+                </div>
             </div>
+            </ErrorBoundary>
         </div>
     );
 };
 
-export default StudentPage;
+export default React.memo(StudentPage);

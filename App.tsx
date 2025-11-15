@@ -1,8 +1,8 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import FloatingAIBackground from "./components/FloatingAIBackground";
 import StudentPage from "./components/StudentPage";
+import type { Course, Lesson } from "./types";
 import "./index.css";
-import logo from "./assets/logo.png"; // ✅ Import the logo image
 
 interface User {
     name: string;
@@ -12,57 +12,60 @@ interface User {
 function App() {
     const [user, setUser] = useState<User | null>(null);
 
-    // 🔹 Detect LinkedIn callback (auth-success redirect)
+    // 🔹 Parse query params after LinkedIn login (auth-success redirect)
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const name = params.get("name");
         const email = params.get("email");
 
         if (name && email) {
+            // Save user in state and localStorage
             const newUser = { name, email };
             setUser(newUser);
             localStorage.setItem("user", JSON.stringify(newUser));
+            // Clear query params from URL
             window.history.replaceState({}, document.title, "/");
         } else {
+            // Restore from localStorage if present
             const stored = localStorage.getItem("user");
-            if (stored) setUser(JSON.parse(stored));
+            if (stored) {
+                setUser(JSON.parse(stored));
+            }
         }
     }, []);
 
-    // 🔹 Logout handler
-    const handleLogout = () => {
+    // 🔹 Handle logout
+    const handleLogout = useCallback((): void => {
         localStorage.removeItem("user");
         setUser(null);
-    };
+    }, []);
 
-    // 🔹 LinkedIn login redirect
-    const handleLinkedInLogin = () => {
+    // 🔹 Handle LinkedIn login redirect
+    const handleLinkedInLogin = useCallback((): void => {
         window.location.href = "https://design-your-ai.vercel.app/api/auth/linkedin";
-    };
+    }, []);
 
-    const handleGithubLogin = () => {
+    // 🔹 Placeholder GitHub login
+    const handleGithubLogin = useCallback((): void => {
         alert("GitHub login coming soon!");
-    };
+    }, []);
 
-    // ======================================
-    // HOME PAGE (Before Login)
-    // ======================================
+    // ==============================
+    // AUTHENTICATION PAGE (HOME)
+    // ==============================
     if (!user) {
         return (
             <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-sky-100 to-purple-100 overflow-hidden font-[Inter]">
-                {/* Floating AI Background */}
+                {/* Floating Background */}
                 <FloatingAIBackground />
 
-                {/* Header with logo */}
+                {/* Header */}
                 <header className="z-10 w-full bg-gradient-to-r from-cyan-400 to-indigo-900 px-8 py-4 shadow-lg flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                        {/* ✅ Added Logo */}
-                        <img
-                            src={logo}
-                            alt="Design Your AI Logo"
-                            className="w-14 h-14 rounded-full shadow-md border-2 border-white"
-                        />
-                        <h1 className="text-2xl sm:text-3xl font-bold text-white">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 via-indigo-700 to-purple-400 rounded-xl flex items-center justify-center text-2xl">
+                            🤖
+                        </div>
+                        <h1 className="text-xl sm:text-2xl font-bold text-white">
                             Design Your AI
                         </h1>
                     </div>
@@ -83,14 +86,13 @@ function App() {
                         <p className="text-lg text-slate-700 mb-6">
                             Explore a variety of courses that empower you to bring your AI
                             ideas to life and become the creator of your own intelligent
-                            innovations.
+                            innovations. Contact admin@designyourai.in for future updates.
                         </p>
                         <p className="text-indigo-800 font-semibold mb-6">
                             To get you started, sign up with:
                         </p>
 
                         <div className="flex flex-wrap justify-center gap-4">
-                            {/* LinkedIn Button */}
                             <button
                                 onClick={handleLinkedInLogin}
                                 className="flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-indigo-800 hover:from-cyan-500 hover:to-indigo-900 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-transform hover:-translate-y-1"
@@ -106,7 +108,6 @@ function App() {
                                 Sign in with LinkedIn
                             </button>
 
-                            {/* GitHub Button */}
                             <button
                                 onClick={handleGithubLogin}
                                 className="flex items-center gap-2 bg-gradient-to-r from-purple-400 to-indigo-900 hover:from-purple-500 hover:to-indigo-950 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-transform hover:-translate-y-1"
@@ -128,19 +129,17 @@ function App() {
         );
     }
 
-    // ======================================
+    // ==============================
     // STUDENT DASHBOARD (After Login)
-    // ======================================
+    // ==============================
     return (
         <div className="min-h-screen flex flex-col bg-slate-50 font-[Inter]">
-            {/* Header with logo + user info */}
+            {/* Header with user greeting */}
             <header className="bg-gradient-to-r from-cyan-400 to-indigo-900 text-white px-6 py-4 flex justify-between items-center shadow-lg">
                 <div className="flex items-center gap-3">
-                    <img
-                        src={logo}
-                        alt="Design Your AI Logo"
-                        className="w-12 h-12 rounded-full border-2 border-white shadow-md"
-                    />
+                    <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 via-indigo-700 to-purple-400 rounded-xl flex items-center justify-center text-2xl">
+                        🤖
+                    </div>
                     <h1 className="text-2xl font-bold">Design Your AI</h1>
                 </div>
                 <div className="flex items-center gap-3">
@@ -156,10 +155,14 @@ function App() {
 
             {/* Student Page */}
             <main className="flex-1 p-8">
-                <StudentPage
-                    courses={[]} // integrate your real data later
-                    completedVideoIds={new Set()}
-                    toggleVideoCompletion={() => { }}
+                <StudentPage 
+                    initialCourseId={undefined}
+                    onCourseSelect={(courseId: string) => console.log('Course selected:', courseId)}
+                    onLessonSelect={(lessonId: string) => console.log('Lesson selected:', lessonId)}
+                    onLessonComplete={(lessonId: string, completed: boolean) => 
+                        console.log(`Lesson ${lessonId} marked as ${completed ? 'completed' : 'incomplete'}`)
+                    }
+                    className=""
                 />
             </main>
         </div>

@@ -6,10 +6,15 @@ export default {
   ],
   theme: {
     extend: {
+       fontFamily: {
+      poppins: ['Poppins', 'sans-serif'],
+    },
       keyframes: {
         float: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-25px)" },
+          "0%, 100%": { transform: "translateY(0) rotate(0deg) scale(1)" },
+          "25%": { transform: "translateY(-20px) rotate(5deg) scale(1.05)" },
+          "50%": { transform: "translateY(-40px) rotate(-5deg) scale(0.95)" },
+          "75%": { transform: "translateY(-20px) rotate(2deg) scale(1.02)" },
         },
         pulseGlow: {
           "0%, 100%": { opacity: "0.3", transform: "scale(1)" },

@@ -1,0 +1,421 @@
+[
+  {
+    "id": "1",
+    "title": "Databases design",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "1",
+        "title": "RDBMS Design Principles",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "2",
+        "title": "Understanding different databases and design",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "3",
+        "title": "Case Study: Designing databases",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "4",
+        "title": "Excercises",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "5",
+        "title": "Assessment",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "title": "Introduction to data analytics and Data Quality",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "1",
+        "title": "Introduction to Data Analysis",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "2",
+        "title": "Data Quality",
+        "video": "https://drive.google.com/file/d/16Z0w-SneqbVCxYQa2i3fwjqGp3aKkuLc/view?usp=sharing",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "3",
+        "title": "Data quality workbook",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "4",
+        "title": "Exploratory Data Analysis",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "5",
+        "title": "Exploratory Data Analysis: Handson",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "6",
+        "title": "Assessment",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "3",
+    "title": "Designing Supervised Learning Systems",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "1",
+        "title": "Introduction to Machine Learning",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "2",
+        "title": "Regerssion algorithms",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "3",
+        "title": "Decision Trees and ensembled methods",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "4",
+        "title": "Support Vector Methods",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "5",
+        "title": "Implementation of Machine Learning Algorithms",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "6",
+        "title": "Evaluation Metrics",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "7",
+        "title": "Hyper-parameter tuning and Grid Search",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "8",
+        "title": "Case Studies for Regression and Classification",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      },
+      {
+        "id": "9",
+        "title": "Assessment",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "4",
+    "title": "Designing Unsupervised Learning Systems",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "1",
+        "title": "K-Means Algorithm",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "5",
+    "title": "Designing Time-series Forecasting",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "1",
+        "title": "Understanding Time Series Data and EDA",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "6",
+    "title": "Designing Reinforcement Learning",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "1",
+        "title": "Introduction to concepts",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "7",
+    "title": "Designing Deep Learning Systems",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "7-1",
+        "title": "Lesson 7-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "8",
+    "title": "Designing Recommendation Systems",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "8-1",
+        "title": "Lesson 8-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "9",
+    "title": "Designing Image Processing and Image Classification Systems",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "9-1",
+        "title": "Lesson 9-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "10",
+    "title": "Designing Natural Language Systems",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "10-1",
+        "title": "Lesson 10-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "11",
+    "title": "Transformers architecture and Large Language Models",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "11-1",
+        "title": "Lesson 11-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "12",
+    "title": "System Design using Prompt engineering and API design",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "12-1",
+        "title": "Lesson 12-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "13",
+    "title": "RAG design and architecture",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "13-1",
+        "title": "Lesson 13-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "14",
+    "title": "Building Systems using Transformer Finetuning",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "14-1",
+        "title": "Lesson 14-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "15",
+    "title": "Services Design and Architecture",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "15-1",
+        "title": "Lesson 15-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "16",
+    "title": "Model lifecycle, model deployment and CI/CD pipelines",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "16-1",
+        "title": "Lesson 16-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "17",
+    "title": "Performance Optimization techniques for machine learning and deep learning",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "17-1",
+        "title": "Lesson 17-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "18",
+    "title": "Model Deployment using Docker",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "18-1",
+        "title": "Lesson 18-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "19",
+    "title": "Model Deployment using Kubernetes",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "19-1",
+        "title": "Lesson 19-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  },
+  {
+    "id": "20",
+    "title": "Agentic AI architectures",
+    "description": "",
+    "category": "",
+    "lessons": [
+      {
+        "id": "20-1",
+        "title": "Lesson 20-1",
+        "video": "",
+        "notebook": "",
+        "assessment": ""
+      }
+    ]
+  }
+]

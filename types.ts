@@ -4,11 +4,19 @@ export interface Video {
   description: string;
   url: string; // This will now store a real URL from a backend or CDN
 }
-
+export interface Lesson {
+    id: string;
+    title: string;
+    video: string;
+    notebook: string;
+    assessment: string;
+}
 export interface Course {
-  id: string;
-  title: string;
-  videos: Video[];
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    lessons: Lesson[];
 }
 
 export interface User {
