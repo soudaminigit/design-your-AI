@@ -123,17 +123,85 @@ interface ReactPlayerProps {
   onReady?: () => void;
 }
 
-// Safe wrapper for ReactPlayer with error boundary
-const SafeReactPlayer = React.lazy(async (): Promise<{ default: React.ComponentType<ReactPlayerProps> }> => {
-  try {
-    // @ts-ignore - We know this module exists at runtime
-    const module = await import('react-player/lazy');
-    return { default: module.default };
-  } catch (error: unknown) {
-    console.error('Failed to load ReactPlayer:', error);
-    return { default: FallbackPlayer };
-  }
-});
+// Custom VideoPlayer component using native HTML5 video
+interface VideoPlayerProps {
+  url: string;
+  style?: React.CSSProperties;
+  className?: string;
+  controls?: boolean;
+  autoPlay?: boolean;
+  loop?: boolean;
+  muted?: boolean;
+  onError?: (e: React.SyntheticEvent<HTMLVideoElement, Event>) => void;
+  onPlay?: () => void;
+  onPause?: () => void;
+  onEnded?: () => void;
+}
+
+const VideoPlayer: React.FC<VideoPlayerProps> = ({
+  url,
+  style,
+  className = '',
+  controls = true,
+  autoPlay = false,
+  loop = false,
+  muted = false,
+  onError,
+  onPlay,
+  onPause,
+  onEnded,
+  ...props
+}) => {
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+
+  return (
+    <div 
+      className={`video-container ${className}`}
+      style={{
+        position: 'relative',
+        paddingBottom: '56.25%', // 16:9 aspect ratio
+        height: 0,
+        overflow: 'hidden',
+        ...style
+      }}
+    >
+      <video
+        ref={videoRef}
+        src={url}
+        controls={controls}
+        autoPlay={autoPlay}
+        loop={loop}
+        muted={muted}
+        onError={onError}
+        onPlay={onPlay}
+        onPause={onPause}
+        onEnded={onEnded}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: '#000',
+        }}
+        {...props}
+      >
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  );
+};
+
+// Safe wrapper for VideoPlayer with error boundary
+const SafeVideoPlayer: React.FC<VideoPlayerProps> = (props) => {
+  return (
+    <ErrorBoundary fallback={<FallbackPlayer url={props.url} />}>
+      <Suspense fallback={<PlayerFallback />}>
+        <VideoPlayer {...props} />
+      </Suspense>
+    </ErrorBoundary>
+  );
+};
 
 // Fallback component for loading
 const PlayerFallback = () => (
@@ -322,40 +390,43 @@ const StudentPage: React.FC<StudentPageProps> = ({
                                                 }
                                             >
                                                 <Suspense fallback={<PlayerFallback />}>
-                                                    <div className="relative aspect-video w-full bg-black rounded-lg overflow-hidden">
-                                                        <SafeReactPlayer 
-                                                            url={selectedLesson.url} 
-                                                            width="100%"
-                                                            height="100%"
-                                                            style={{
-                                                                position: 'absolute',
-                                                                top: 0,
-                                                                left: 0,
-                                                                width: '100%',
-                                                                height: '100%',
-                                                            }}
-                                                            controls
-                                                            config={{
-                                                                file: {
-                                                                    attributes: {
-                                                                        controlsList: 'nodownload',
-                                                                        disablePictureInPicture: true,
-                                                                    }
-                                                                }
-                                                            }}
-                                                            onError={(error: Error) => {
-                                                                console.error('Error loading video:', error);
-                                                            }}
-                                                            onReady={() => {
-                                                                // Set focus to the player when it's ready for better keyboard navigation
-                                                                const player = document.querySelector('.react-player');
-                                                                if (player instanceof HTMLElement) {
-                                                                    player.setAttribute('tabindex', '-1');
-                                                                    player.focus();
-                                                                }
-                                                            }}
-                                                        />
-                                                    </div>
+                                                    <ErrorBoundary 
+                                                        fallback={
+                                                            <div className="p-4 bg-red-50 rounded-lg">
+                                                                <p className="text-red-700">Unable to load the video player.</p>
+                                                                <a 
+                                                                    href={selectedLesson?.url} 
+                                                                    target="_blank" 
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-blue-600 hover:underline mt-2 inline-block"
+                                                                >
+                                                                    Open video in new tab
+                                                                </a>
+                                                            </div>
+                                                        }
+                                                    >
+                                                        <div className="relative w-full bg-black rounded-lg overflow-hidden">
+                                                            {selectedLesson && (
+                                                                <SafeVideoPlayer 
+                                                                    url={selectedLesson.url}
+                                                                    style={{
+                                                                        width: '100%',
+                                                                        height: '100%',
+                                                                    }}
+                                                                    onError={(e) => {
+                                                                        console.error('Error loading video:', e);
+                                                                    }}
+                                                                    onPlay={() => {
+                                                                        // Set focus to the player when it starts playing
+                                                                        const video = document.querySelector('video');
+                                                                        if (video) {
+                                                                            video.focus();
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        </div>
+                                                    </ErrorBoundary>
                                                 </Suspense>
                                             </ErrorBoundary>
                                         </div>
