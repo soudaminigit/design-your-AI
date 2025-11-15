@@ -31,9 +31,18 @@ export default defineConfig(({ mode }) => {
             react: ['react', 'react-dom', 'react-router-dom'],
             vendor: ['axios', 'react-player'],
           },
+          // Handle font assets
+          assetFileNames: (assetInfo) => {
+            if (assetInfo.name?.endsWith('.woff2')) {
+              return 'assets/fonts/[name][extname]';
+            }
+            return 'assets/[name]-[hash][extname]';
+          },
         },
       },
       chunkSizeWarningLimit: 1000,
+      // Ensure fonts are properly copied
+      assetsInlineLimit: 0, // This ensures all assets are copied as files
     },
     optimizeDeps: {
       include: ['react', 'react-dom', 'react-router-dom'],

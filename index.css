@@ -1,14 +1,13 @@
+/* Google font (Poppins) */
+@import "@fontsource/poppins/400.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* 🎨 Custom global styles */
-/*@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'); */
-
-/* Google font (Poppins) */
-@import "@fontsource/poppins/400.css";
-@import "@fontsource/poppins/600.css";
-@import "@fontsource/poppins/700.css";
 
 /* === Global Page Styling === */
 html, body {
