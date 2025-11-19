@@ -1,35 +1,49 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
     "module": "ESNext",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "skipLibCheck": true,
-    "types": [
-      "node"
-    ],
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "bundler",
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "allowJs": true,
+    "lib": [ "ES2022", "DOM", "DOM.Iterable" ],
     "jsx": "react-jsx",
+
+    /* React / JSX Fix (IMPORTANT) */
+    "types": [ "react", "react-dom", "node" ],
+    "skipLibCheck": true,
+
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* Project options */
+    "allowJs": true,
     "resolveJsonModule": true,
+    "isolatedModules": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+
+    /* Paths */
+    "baseUrl": "./",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": [ "./*" ]
     },
-    "allowImportingTsExtensions": false,
+
+    /* Output */
+    "outDir": "./dist",
     "noEmit": false,
-    "outDir": "./dist"
-  }
+
+    /* Other flags */
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false
+  },
+
+  "include": [
+    "./src",
+    "./components",
+    "./Scripts",
+    "./**/*.ts",
+    "./**/*.tsx",
+    "./**/*.js",
+    "./**/*.jsx",
+    "./*.d.ts"
+  ],
+  "exclude": [ "node_modules", "dist" ]
 }
