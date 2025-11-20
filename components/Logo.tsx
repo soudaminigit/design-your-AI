@@ -1,15 +1,19 @@
-import React from 'react';
-
-const logo = "../assets/logo.png";
+﻿import React from "react";
+import logo from "../assets/logo.png"; // ✅ Vite will resolve & bundle this
 
 interface LogoProps {
-  className?: string;
+    className?: string;
 }
 
 const Logo: React.FC<LogoProps> = ({ className }) => {
-  return (
-    <img src={logo} alt="LMS Platform Logo" className={className} />
-  );
+    return (
+        <img
+            src={logo}
+            alt="Logo"
+            className={className}
+            style={{ objectFit: "contain" }}
+        />
+    );
 };
 
 export default Logo;
