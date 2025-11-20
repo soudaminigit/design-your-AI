@@ -1,5 +1,6 @@
 import React from "react";
 import type { User } from "../types";
+import Logo from "./Logo";
 
 interface HeaderProps {
     currentView: "student" | "admin";
@@ -12,12 +13,10 @@ const Header: React.FC<HeaderProps> = ({ currentView, setView, currentUser, onLo
     return (
         <header className="w-full bg-sky-600 text-white px-6 py-3 shadow-md flex justify-between items-center">
             <div className="flex items-center gap-6">
-                <h1
-                    className="text-lg font-semibold cursor-pointer"
-                    onClick={() => setView("student")}
-                >
-                    Design Your AI
-                </h1>
+                <div className="flex items-center gap-3 cursor-pointer" onClick={() => setView("student")}>
+                    <Logo className="w-10 h-10 object-contain rounded-md" />
+                    <h1 className="text-lg font-semibold">Design Your AI</h1>
+                </div>
 
                 {/* Navigation toggle */}
                 <nav className="hidden sm:flex gap-4">

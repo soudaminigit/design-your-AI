@@ -39,7 +39,17 @@ const normalizeCourses = (raw: any[]): Course[] => {
     });
 };
 
-const StudentPage: React.FC = () => {
+interface StudentPageProps {
+    onCourseSelect?: (courseId: string) => void;
+    onLessonSelect?: (lessonId: string) => void;
+    onLessonComplete?: (lessonId: string, completed: boolean) => void;
+}
+
+const StudentPage: React.FC<StudentPageProps> = ({
+    onCourseSelect,
+    onLessonSelect,
+    onLessonComplete
+}) => {
     // import the JSON directly (works with "resolveJsonModule" in tsconfig)
     const raw: any[] = rawCoursesData as any[];
     const [courses, setCourses] = useState<Course[]>([]);

@@ -11,18 +11,19 @@
   },
   "dependencies": {
     "@fontsource/poppins": "^5.2.7",
+    "@vercel/kv": "^3.0.0",
     "axios": "^1.7.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-player": "^3.3.3",
+    "react-player": "^3.4.0",
     "react-router-dom": "^7.9.5",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^22.14.0",
-    "@types/react": "^19.0.2",
-    "@types/react-dom": "^19.0.2",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.22",

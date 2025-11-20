@@ -1,42 +1,25 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES2020",
+    "lib": [ "DOM", "DOM.Iterable", "ES2020" ],
     "module": "ESNext",
-    "lib": [ "ES2022", "DOM", "DOM.Iterable" ],
-    "jsx": "react-jsx",
-
-    /* React / JSX Fix (IMPORTANT) */
-    "types": [ "react", "react-dom", "node" ],
+    "moduleResolution": "Node",
     "skipLibCheck": true,
-
-    "moduleResolution": "node",
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-
-    /* Project options */
+    "esModuleInterop": true,
     "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
 
-    /* Paths */
-    "baseUrl": "./",
-    "paths": {
-      "@/*": [ "./*" ]
-    },
-
-    /* Output */
-    "outDir": "./dist",
-    "noEmit": false,
-
-    /* Other flags */
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false
+    "jsx": "react-jsx",
+    "types": [ "react", "react-dom" ]
   },
-
   "include": [
     "./src",
+    ".",
     "./components",
     "./Scripts",
     "./**/*.ts",

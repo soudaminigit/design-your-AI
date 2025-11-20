@@ -9,6 +9,7 @@ export interface Lesson {
     title: string;
     video: string;
     notebook: string;
+    description: string;
     assessment: string;
 }
 export interface Course {

@@ -3,6 +3,7 @@ import FloatingAIBackground from "./components/FloatingAIBackground";
 import StudentPage from "./components/StudentPage";
 import type { Course, Lesson } from "./types";
 import "./index.css";
+import Logo from "./components/Logo";
 
 interface User {
     name: string;
@@ -42,7 +43,7 @@ function App() {
 
     // 🔹 Handle LinkedIn login redirect
     const handleLinkedInLogin = useCallback((): void => {
-        window.location.href = "https://design-your-ai.vercel.app/api/auth/linkedin";
+        window.location.href = "/api/auth/linkedin";
     }, []);
 
     // 🔹 Placeholder GitHub login
@@ -62,9 +63,7 @@ function App() {
                 {/* Header */}
                 <header className="z-10 w-full bg-gradient-to-r from-cyan-400 to-indigo-900 px-8 py-4 shadow-lg flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 via-indigo-700 to-purple-400 rounded-xl flex items-center justify-center text-2xl">
-                            🤖
-                        </div>
+                        <Logo className="w-10 h-10 rounded-md" />
                         <h1 className="text-xl sm:text-2xl font-bold text-white">
                             Design Your AI
                         </h1>
@@ -110,7 +109,7 @@ function App() {
 
                             <button
                                 onClick={handleGithubLogin}
-                                className="flex items-center gap-2 bg-gradient-to-r from-purple-400 to-indigo-900 hover:from-purple-500 hover:to-indigo-950 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-transform hover:-translate-y-1"
+                                className="flex items-center gap-2 bg-gradient-to-r from-purple-400 to-indigo-900 hover:from-purple-500 hover:to-purple-950 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-transform hover:-translate-y-1"
                             >
                                 <svg
                                     className="w-6 h-6"
@@ -137,9 +136,7 @@ function App() {
             {/* Header with user greeting */}
             <header className="bg-gradient-to-r from-cyan-400 to-indigo-900 text-white px-6 py-4 flex justify-between items-center shadow-lg">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 via-indigo-700 to-purple-400 rounded-xl flex items-center justify-center text-2xl">
-                        🤖
-                    </div>
+                    <Logo className="w-10 h-10 rounded-md" />
                     <h1 className="text-2xl font-bold">Design Your AI</h1>
                 </div>
                 <div className="flex items-center gap-3">
@@ -155,18 +152,21 @@ function App() {
 
             {/* Student Page */}
             <main className="flex-1 p-8">
-                <StudentPage 
-                    initialCourseId={undefined}
+                <StudentPage
                     onCourseSelect={(courseId: string) => console.log('Course selected:', courseId)}
+
                     onLessonSelect={(lessonId: string) => console.log('Lesson selected:', lessonId)}
-                    onLessonComplete={(lessonId: string, completed: boolean) => 
+
+                    onLessonComplete={(lessonId: string, completed: boolean) =>
                         console.log(`Lesson ${lessonId} marked as ${completed ? 'completed' : 'incomplete'}`)
                     }
-                    className=""
                 />
+
+
             </main>
         </div>
     );
 }
 
 export default App;
+
