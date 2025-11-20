@@ -15,7 +15,7 @@ const StudentPage: React.FC = () => {
             id: "c1",
             title: "Sample Course",
             lessons: [
-                { id: "l1", title: "Lesson 1", url: "https://drive.google.com/file/d/16Z0w-SneqbVCxYQa2i3fwjqGp3aKkuLc/view?usp=drive_link" }
+                { id: "l1", title: "Lesson 1", url: "https://wbcjzgxbvd76hrwu.public.blob.vercel-storage.com/DataAnalytics_with_S%20%282%29.mp4" }
             ]
         };
         setCourses([sample]);
