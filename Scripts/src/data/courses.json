@@ -51,14 +51,14 @@
       {
         "id": "1",
         "title": "Introduction to Data Analysis",
-        "video": "",
+        "video": "https://wbcjzgxbvd76hrwu.public.blob.vercel-storage.com/DataAnalytics.mp4",
         "notebook": "",
         "assessment": ""
       },
       {
         "id": "2",
         "title": "Data Quality",
-        "video": "https://drive.google.com/uc?export=download&id=16Z0w-SneqbVCxYQa2i3fwjqGp3aKkuLc",
+        "video": "https://wbcjzgxbvd76hrwu.public.blob.vercel-storage.com/Data%20Quality.mp4",
         "notebook": "",
         "assessment": ""
       },
@@ -72,7 +72,7 @@
       {
         "id": "4",
         "title": "Exploratory Data Analysis",
-        "video": "",
+        "video": "https://wbcjzgxbvd76hrwu.public.blob.vercel-storage.com/EDA_With_Script.mp4",
         "notebook": "",
         "assessment": ""
       },
