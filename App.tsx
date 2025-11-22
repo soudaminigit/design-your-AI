@@ -4,16 +4,16 @@ import StudentPage from "./components/StudentPage";
 import type { Course, Lesson } from "./types";
 import "./index.css";
 
-import Logo from "./components/Logo";
 import Header from "./components/Header";
 import HomePage from "./HomePage";
+import ResourcesPage from "./components/ResourcesPage";
 
 interface User {
     name: string;
     email: string;
 }
 
-type View = "home" | "auth" | "student" | "admin";
+type View = "home" | "auth" | "student" | "resources";
 
 export default function App() {
     const [user, setUser] = useState<User | null>(null);
@@ -58,7 +58,7 @@ export default function App() {
     };
 
     // =============================
-    // VIEW: HOME (landing page)
+    // VIEW: HOME (Landing page)
     // =============================
     if (!user && view === "home") {
         return (
@@ -73,14 +73,17 @@ export default function App() {
                 />
 
                 <main className="px-6 py-10 max-w-6xl mx-auto relative z-10">
-                    <HomePage onGetStarted={() => setView("auth")} />
+                    <HomePage
+                        onGetStarted={() => setView("auth")}
+                        onExploreResources={() => setView("resources")}
+                    />
                 </main>
             </div>
         );
     }
 
     // =============================
-    // VIEW: AUTH PAGE (LinkedIn login)
+    // VIEW: AUTH (LinkedIn login)
     // =============================
     if (!user && view === "auth") {
         return (
@@ -130,7 +133,32 @@ export default function App() {
     }
 
     // =============================
-    // VIEW: STUDENT (after login)
+    // VIEW: RESOURCES PAGE
+    // =============================
+    if (view === "resources" && !user) {
+        return (
+            <div className="relative min-h-screen bg-gradient-to-b from-slate-50 to-white">
+                <FloatingAIBackground />
+
+                <Header
+                    currentView={view}
+                    setView={setView}
+                    currentUser={user}
+                    onLogout={handleLogout}
+                />
+
+                <main className="px-6 py-10 max-w-6xl mx-auto relative z-10">
+                    <ResourcesPage
+                        onBack={() => setView("home")}
+                        onStartLearning={() => setView("auth")}
+                    />
+                </main>
+            </div>
+        );
+    }
+
+    // =============================
+    // VIEW: STUDENT (After login)
     // =============================
     return (
         <div className="min-h-screen flex flex-col bg-slate-50 font-[Inter]">

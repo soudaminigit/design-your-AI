@@ -3,7 +3,7 @@ import Logo from "./Logo";
 
 interface HeaderProps {
     currentView: string;
-    setView: React.Dispatch<React.SetStateAction<"home" | "auth" | "admin" | "student">>;
+    setView: React.Dispatch<React.SetStateAction<"home" | "auth" | "student" | "resources">>;
     currentUser: any;
     onLogout: () => void;
 }
@@ -49,10 +49,10 @@ const Header: React.FC<HeaderProps> = ({
                     </button>
 
                     <button
-                        onClick={() => setView("admin")}
+                        onClick={() => setView("resources")}
                         className="hover:underline"
                     >
-                        Admin
+                        Resources
                     </button>
 
                     {/* LOGIN / LOGOUT */}

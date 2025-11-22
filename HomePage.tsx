@@ -2,9 +2,11 @@ import React from "react";
 
 interface HomeProps {
     onGetStarted?: () => void;
+    onExploreResources?: () => void;
 }
 
-const HomePage: React.FC<HomeProps> = ({ onGetStarted }) => {
+
+const HomePage: React.FC<HomeProps> = ({ onGetStarted, onExploreResources }) => {
     return (
         <section className="space-y-12">
 
@@ -26,12 +28,13 @@ const HomePage: React.FC<HomeProps> = ({ onGetStarted }) => {
                     >
                         Get Started
                     </button>
-                    <a
-                        href="#resources"
-                        className="px-6 py-3 rounded-md border border-indigo-300 text-indigo-700 font-semibold"
+                    <button
+                        onClick={onExploreResources}
+                        className="px-5 py-3 rounded-md bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow-lg hover:scale-[1.02] transition"
                     >
                         Explore Resources
-                    </a>
+                    </button>
+
                 </div>
             </div>
 

@@ -13,6 +13,7 @@
 html, body {
     margin: 0;
     padding: 0;
+    @apply font-sans;
     font-family: 'Poppins', sans-serif;
     background-color: #f8fafc; /* subtle background */
     color: #1e293b; /* slate-800 text */
