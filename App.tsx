@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import FloatingAIBackground from "./components/FloatingAIBackground";
 import StudentPage from "./components/StudentPage";
-import type { Course, Lesson } from "./types";
 import "./index.css";
 
 import Header from "./components/Header";
@@ -9,19 +8,18 @@ import HomePage from "./HomePage";
 import ResourcesPage from "./components/ResourcesPage";
 import CoursePage from "./components/CoursesPage";
 
-
 interface User {
     name: string;
     email: string;
 }
 
-type View = "home" | "auth" | "student" | "resources";
+type View = "home" | "auth" | "student" | "resources" | "courses";
 
 export default function App() {
     const [user, setUser] = useState<User | null>(null);
     const [view, setView] = useState<View>("home");
 
-    // When LinkedIn redirects with ?name=..&email=..
+    // LinkedIn redirect handler
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const name = params.get("name");
@@ -37,11 +35,10 @@ export default function App() {
             return;
         }
 
-        // Restore session
         const stored = localStorage.getItem("user");
         if (stored) {
             setUser(JSON.parse(stored));
-            setView("student");
+            // DO NOT force redirect
         }
     }, []);
 
@@ -60,11 +57,11 @@ export default function App() {
     };
 
     // =============================
-    // VIEW: HOME (Landing page)
+    // HOME PAGE
     // =============================
     if (!user && view === "home") {
         return (
-            <div className="relative min-h-screen bg-gradient-to-b from-slate-50 to-white">
+            <div className="relative min-h-screen bg-gradient-to-b from-slate-50 to-white overflow-y-auto">
                 <FloatingAIBackground />
 
                 <Header
@@ -85,11 +82,11 @@ export default function App() {
     }
 
     // =============================
-    // VIEW: AUTH (LinkedIn login)
+    // AUTH PAGE
     // =============================
     if (!user && view === "auth") {
         return (
-            <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-sky-100 to-purple-100 font-[Inter]">
+            <div className="relative min-h-screen bg-gradient-to-br from-sky-100 to-purple-100 overflow-y-auto font-[Inter]">
                 <FloatingAIBackground />
 
                 <Header
@@ -99,7 +96,7 @@ export default function App() {
                     onLogout={handleLogout}
                 />
 
-                <main className="flex flex-col flex-1 items-center justify-center px-4 text-center relative z-10">
+                <main className="flex flex-col items-center justify-center px-4 text-center relative z-10 py-20">
                     <div className="bg-white/90 p-10 rounded-2xl shadow-2xl max-w-2xl">
                         <h1 className="text-3xl sm:text-4xl font-extrabold text-indigo-900 mb-4">
                             Register / Login
@@ -113,8 +110,8 @@ export default function App() {
                             <button
                                 onClick={handleLinkedInLogin}
                                 className="flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-indigo-800 
-                                hover:from-cyan-500 hover:to-indigo-900 text-white px-6 py-3 rounded-lg font-semibold 
-                                shadow-md transition-transform hover:-translate-y-1"
+                hover:from-cyan-500 hover:to-indigo-900 text-white px-6 py-3 rounded-lg font-semibold 
+                shadow-md transition-transform hover:-translate-y-1"
                             >
                                 Sign in with LinkedIn
                             </button>
@@ -122,8 +119,8 @@ export default function App() {
                             <button
                                 onClick={handleGithubLogin}
                                 className="flex items-center gap-2 bg-gradient-to-r from-purple-400 to-indigo-900 
-                                hover:from-purple-500 hover:to-purple-950 text-white px-6 py-3 rounded-lg font-semibold 
-                                shadow-md transition-transform hover:-translate-y-1"
+                hover:from-purple-500 hover:to-purple-950 text-white px-6 py-3 rounded-lg font-semibold 
+                shadow-md transition-transform hover:-translate-y-1"
                             >
                                 Sign in with GitHub
                             </button>
@@ -135,11 +132,11 @@ export default function App() {
     }
 
     // =============================
-    // VIEW: RESOURCES PAGE
+    // RESOURCES PAGE
     // =============================
-    if (view === "resources" && !user) {
+    if (!user && view === "resources") {
         return (
-            <div className="relative min-h-screen bg-gradient-to-b from-slate-50 to-white">
+            <div className="relative min-h-screen bg-gradient-to-b from-slate-50 to-white overflow-y-auto">
                 <FloatingAIBackground />
 
                 <Header
@@ -160,10 +157,35 @@ export default function App() {
     }
 
     // =============================
-    // VIEW: STUDENT (After login)
+    // COURSES PAGE (public)
+    // =============================
+    if (!user && view === "courses") {
+        return (
+            <div className="relative min-h-screen bg-gradient-to-b from-slate-50 to-white overflow-y-auto">
+                <FloatingAIBackground />
+
+                <Header
+                    currentView={view}
+                    setView={setView}
+                    currentUser={user}
+                    onLogout={handleLogout}
+                />
+
+                <main className="px-6 py-10 max-w-6xl mx-auto relative z-10">
+                    <CoursePage
+                        onBack={() => setView("home")}
+                        onStartLearning={() => setView("auth")}
+                    />
+                </main>
+            </div>
+        );
+    }
+
+    // =============================
+    // STUDENT PAGE (protected)
     // =============================
     return (
-        <div className="min-h-screen flex flex-col bg-slate-50 font-[Inter]">
+        <div className="min-h-screen flex flex-col bg-slate-50 font-[Inter] overflow-y-auto">
             <Header
                 currentView={view}
                 setView={setView}
