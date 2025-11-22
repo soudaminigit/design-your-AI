@@ -6,14 +6,14 @@ import "./index.css";
 
 import Logo from "./components/Logo";
 import Header from "./components/Header";
-import HomePage from "./components/HomePage";
+import HomePage from "./HomePage";
 
 interface User {
     name: string;
     email: string;
 }
 
-type View = "home" | "auth" | "student";
+type View = "home" | "auth" | "student" | "admin";
 
 export default function App() {
     const [user, setUser] = useState<User | null>(null);
