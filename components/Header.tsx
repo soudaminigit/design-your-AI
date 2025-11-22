@@ -3,10 +3,11 @@ import Logo from "./Logo";
 
 interface HeaderProps {
     currentView: string;
-    setView: (v: string) => void;
+    setView: React.Dispatch<React.SetStateAction<"home" | "auth" | "admin" | "student">>;
     currentUser: any;
     onLogout: () => void;
 }
+
 
 const Header: React.FC<HeaderProps> = ({
     currentView,
