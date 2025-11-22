@@ -7,6 +7,8 @@ import "./index.css";
 import Header from "./components/Header";
 import HomePage from "./HomePage";
 import ResourcesPage from "./components/ResourcesPage";
+import CoursePage from "./components/CoursesPage";
+
 
 interface User {
     name: string;
@@ -87,7 +89,7 @@ export default function App() {
     // =============================
     if (!user && view === "auth") {
         return (
-            <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-sky-100 to-purple-100 overflow-hidden font-[Inter]">
+            <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-sky-100 to-purple-100 font-[Inter]">
                 <FloatingAIBackground />
 
                 <Header

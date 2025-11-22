@@ -3,7 +3,7 @@ import Logo from "./Logo";
 
 interface HeaderProps {
     currentView: string;
-    setView: React.Dispatch<React.SetStateAction<"home" | "auth" | "student" | "resources">>;
+    setView: React.Dispatch<React.SetStateAction<"home" | "auth" | "student" | "resources" | "courses">>;
     currentUser: any;
     onLogout: () => void;
 }
