@@ -1,57 +1,79 @@
 import React from "react";
-import type { User } from "../types";
 import Logo from "./Logo";
 
 interface HeaderProps {
-    currentView: "student" | "admin";
-    setView: React.Dispatch<React.SetStateAction<"student" | "admin">>;
-    currentUser: User | null;
-    onLogout: () => Promise<void>;
+    currentView: string;
+    setView: (v: string) => void;
+    currentUser: any;
+    onLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ currentView, setView, currentUser, onLogout }) => {
+const Header: React.FC<HeaderProps> = ({
+    currentView,
+    setView,
+    currentUser,
+    onLogout,
+}) => {
     return (
-        <header className="w-full bg-sky-600 text-white px-6 py-3 shadow-md flex justify-between items-center">
-            <div className="flex items-center gap-6">
-                <div className="flex items-center gap-3 cursor-pointer" onClick={() => setView("student")}>
-                    <Logo className="w-10 h-10 object-contain rounded-md" />
-                    <h1 className="text-lg font-semibold">Design Your AI</h1>
+        <header className="w-full py-4 px-6 bg-gradient-to-r from-indigo-600 via-pink-600 to-rose-500 text-white shadow-lg">
+            <div className="max-w-6xl mx-auto flex items-center justify-between">
+
+                {/* LOGO + TITLE */}
+                <div
+                    className="flex items-center gap-4 cursor-pointer"
+                    onClick={() => setView("home")}
+                >
+                    <Logo className="w-10 h-10 rounded-md shadow-sm object-contain" />
+                    <div>
+                        <div className="text-lg font-bold">Design Your AI</div>
+                        <div className="text-xs opacity-90">Build AI systems end-to-end</div>
+                    </div>
                 </div>
 
-                {/* Navigation toggle */}
-                <nav className="hidden sm:flex gap-4">
+                {/* NAVIGATION */}
+                <nav className="flex items-center gap-6 text-sm font-medium">
+
+                    <button
+                        onClick={() => setView("home")}
+                        className="hover:underline"
+                    >
+                        Home
+                    </button>
+
                     <button
                         onClick={() => setView("student")}
-                        className={`text-sm font-medium ${currentView === "student" ? "underline" : ""
-                            }`}
+                        className="hover:underline"
                     >
-                        Student
+                        Courses
                     </button>
+
                     <button
                         onClick={() => setView("admin")}
-                        className={`text-sm font-medium ${currentView === "admin" ? "underline" : ""
-                            }`}
+                        className="hover:underline"
                     >
                         Admin
                     </button>
-                </nav>
-            </div>
 
-            {/* User info and logout */}
-            <div className="flex items-center gap-4">
-                {currentUser && (
-                    <span className="text-sm">
-                        Welcome, <span className="font-semibold">{currentUser.name}</span>
-                    </span>
-                )}
-                {currentUser && (
-                    <button
-                        onClick={onLogout}
-                        className="bg-white text-sky-600 font-semibold text-sm px-3 py-1 rounded hover:bg-slate-100 transition"
-                    >
-                        Logout
-                    </button>
-                )}
+                    {/* LOGIN / LOGOUT */}
+                    {!currentUser ? (
+                        <button
+                            onClick={() => setView("auth")}
+                            className="ml-4 bg-white/20 px-3 py-1 rounded-md hover:bg-white/30 transition"
+                        >
+                            Register / Login
+                        </button>
+                    ) : (
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm">Hi, {currentUser.name}</span>
+                            <button
+                                onClick={onLogout}
+                                className="bg-white text-indigo-600 px-3 py-1 rounded-md"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    )}
+                </nav>
             </div>
         </header>
     );
